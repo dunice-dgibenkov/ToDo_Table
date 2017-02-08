@@ -1,0 +1,291 @@
+<DOCTYPE html>
+	<html>
+	<head>
+		<title>my ToDo table</title>
+		<meta charset="utf8">
+		<style>
+            form#add{
+                position: relative;
+                top: 30px;
+                left: 400px;
+                background-color: lightblue;
+                width: 300px;
+                margin: 10px 10px;
+                padding: 2px;
+            }
+			table#tab1 {
+				border: 1px solid #338BA6;
+				border-collapse: collapse;
+                position: relative;
+                top: 30px;
+                left:200px;
+                background-color: lightblue;
+                width: 650px;
+                margin: 10px 10px;
+                padding: 2px;
+                border-spacing:0.1em;
+                margin-bottom:1em;
+                margin-top:1em
+			}
+            .submit {
+                padding: 5px 20px;
+                margin-top: 10px;
+            }
+            #button {
+                position: relative;
+                padding: 5px 20px;
+                top: -15px;
+                left: 570px;
+            }
+            td > p {
+                width: 350px;
+            }
+			ul {
+				list-style: none;
+			}
+			input[name = "status"] {
+				display: none;
+			}
+            div#test{
+                position: relative;
+                left: -200px;
+            } 
+            table.sort td{
+            border:1px solid blue;
+            padding:0.3em 1em
+            }
+
+            table.sort thead td{
+            cursor:pointer;
+            cursor:hand;
+            font-weight:bold;
+            text-align:center;
+            vertical-align:middle
+            }
+
+            table.sort thead td.curcol{
+            background-color:#999999;
+            color:#FFFFFF
+            }
+		</style>
+	</head>
+	<body>
+    <div id="test">
+		<form action="" id="add" method="post" onsubmit="addRow();return false;">
+			<ul>
+				<li>
+					<label for="title">Title__</label>
+					<input type="text" name="title" id="title" value="ForExampleTitle" size="20" tabindex="1" />
+				</li>
+				<li>
+					<label for="author">Author</label>
+					<input type="text" name="author" id="author" value="ForExampleAuthor" size="20" tabindex="2" />
+				</li>
+				<li>
+					<label for="status"></label>
+					<input type="checkbox" class="status" id="status" name="status" value="false">
+				</li>
+				<li>
+					<label for="subm"></label>
+					<input type="submit" name="subm" class="submit" value="Add" tabindex="4" />
+				</li>
+			</ul>
+		</form>
+         
+        <label for="button"></label>
+        <input type="button" name="butt" id="button" class="button" value="Clear checked" tabindex="4" onclick="deleteElements()"/>
+
+		<table id="tab1" class="sort" align="center">
+			<thead>
+				<tr>
+					<th>field name</th>
+					<th>status</th>
+					<th>title</th>
+					<th>author</th>
+					<th>last updated</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table> <br>
+
+		<script type="text/javascript">
+
+			var d = document,
+			title, title_,
+			author, author_,
+			status, status_,
+			id, el,
+			done, elems = [],
+            elems2 = [], x,
+			update;
+			function addRow(){
+
+    // Считываем значения с формы
+    title = d.getElementById('title').value;
+    author = d.getElementById('author').value;
+
+    title_ = d.getElementById('title');
+    author_ = d.getElementById('author');
+
+    var checkbox = d.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.onchange = changeAnything; 
+
+    redactionTitle = d.createElement("input");
+    redactionTitle.type = "text";
+    redactionTitle.value = title;
+    redactionTitle.onchange = changeAnything; 
+
+    redactionAuthor = d.createElement("input");
+    redactionAuthor.type = "text";
+    redactionAuthor.value = author;
+    redactionAuthor.onchange = changeAnything;
+    
+    redactionTitleUndated = d.createElement("p");
+    redactionTitleUndated.addClass = "d5";
+     
+    //Проверка на пустое поле
+    var el = 0;
+
+    if (!title.replace(/^\s+|\s+$/g, '')) { 
+       //вырезаем все символы перевода строк
+    	el = 1;
+    	title_.style.border = "2px solid red";
+    } else if (!author.replace(/^\s+|\s+$/g, '')) {
+    	el = 1;
+    	author_.style.border = "2px solid red";
+    }
+
+    if (el) {
+    	alert ('Поля не должны быть пустыми');
+    	return false;
+    }
+
+    if (!el) {
+        title_.style.border = "";
+        author_.style.border = "";
+    	title_.style.backgroundColor = 'lightgreen';
+    	author_.style.backgroundColor = 'lightgreen';
+    }
+    
+    // Находим нужную таблицу
+    var tbody = d.getElementById('tab1').getElementsByTagName('TBODY')[0];
+
+    // Создаем строку таблицы и добавляем ее
+    var row = d.createElement("TR");
+    tbody.appendChild(row);
+
+    // Создаем ячейки в вышесозданной строке и добавляем текст
+    var td1 = d.createElement("TD");
+    var td2 = d.createElement("TD");
+    var td3 = d.createElement("TD");
+    var td4 = d.createElement("TD");
+    var td5 = d.createElement("TD");
+
+    row.appendChild(td1);
+    row.appendChild(td2);
+    row.appendChild(td3);
+    row.appendChild(td4);
+    row.appendChild(td5);
+
+    id = +new Date();
+    updated = new Date();
+
+    // Наполняем ячейки
+    td1.innerHTML = id;
+
+    td2.appendChild(checkbox);
+
+    td3.appendChild(redactionTitle);
+
+
+    td4.appendChild(redactionAuthor);
+
+    redactionTitleUndated.innerHTML = updated;
+
+    td5.appendChild(redactionTitleUndated);
+
+
+    var elements = {
+    	"id": id,
+    	"title": title,
+    	"author": author,
+    	"done": checkbox.checked,
+    	"updated": updated
+    }
+
+    var sElements = JSON.stringify(elements);
+    localStorage.setItem(id, sElements);
+    var retElements = JSON.parse(localStorage.getItem(id));
+     elems2.push(retElements);
+   }
+
+function sortFunction(a, b){
+  if (a < b) return 1;// Или любое число, меньшее нуля
+  if(a > b) return -1;  // Или любое число, большее нуля
+}
+
+
+
+function deleteElements(){
+
+ /*  var sortMassId = [];
+   for (var i = 0; i < elems2.length; i++) {
+
+        sortMassId.push(elems2[i].id);
+   }
+   console.log(sortMassId);
+
+   sortMassId.sort(sortFunction);
+
+   console.log(sortMassId);*/
+
+    
+    x = d.querySelectorAll("tbody tr");
+
+    for (var i = 0; i < x.length; i++) {
+        if (x[i].childNodes[1].firstChild.checked) x[i].parentNode.removeChild(x[i]);
+    }
+
+      var xx = d.querySelectorAll("tbody tr").length;
+
+    for (var ii = 0; ii <= xx; ii++) { 
+
+  	    for (var i = 0; i < x.length; i++) {
+
+  		    if (x[i].childNodes[1].firstChild.checked) { 
+                                       
+                for (var j = 0; j < x.length; j++) {
+
+                        if (x[i].childNodes[1].previousSibling.firstChild.data == elems2[j].id) {
+                        localStorage.removeItem(elems2[j].id);   
+                        elems2.splice(j, 1);                 
+                        break; 
+            
+                    } 
+                }
+            }	  
+        }
+    }
+}
+
+    function changeAnything() {  
+        el = 0;
+        if (!this.value.replace(/^\s+|\s+$/g, '')) {
+        el = 1;
+        this.value = "ForExample";
+          }
+           if (el) {
+        alert ('Поля не должны быть пустыми');
+        this.focus();
+        //return false;
+        }
+
+  		this.parentNode.parentNode.lastChild.lastChild.innerHTML = new Date();
+    } 
+
+</script>
+</div>
+</body>
+</html>
