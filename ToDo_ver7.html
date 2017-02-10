@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+		<title>my ToDo table</title>
+		<meta charset="utf8">
+		<style>
+			#add {
+				position: relative;
+				top: 30px;
+				left: 400px;
+				background-color: lightblue;
+				width: 300px;
+				margin: 10px 10px;
+				padding: 2px;
+			}
+			#tab1 {
+				border: 1px solid #338BA6;
+				border-collapse: collapse;
+				position: relative;
+				top: 30px;
+				left:200px;
+				background-color: lightblue;
+				width: 1000px;
+				margin: 10px 10px;
+				padding: 2px;
+				border-spacing:0.1em;
+				margin-bottom:1em;
+				margin-top:1em;
+			}
+			.submit {
+				background-color: lightgreen;
+				padding: 5px 20px;
+				margin-top: 10px;
+			}
+			.submit:hover {
+				border: 2px solid #338BA6;
+			}
+			#button {
+				position: relative;
+				padding: 5px 20px;
+				top: -15px;
+				left: 570px;
+			}
+			#button:hover {
+				border: 2px solid red;
+			}
+			#deleteAll {
+				color: white;
+				background-color: #904;
+				position: relative;
+				padding: 5px 20px;
+				top: 20px;
+				left: 960px;
+			}
+			#deleteAll:hover {
+				border: 2px solid black;
+			}
+			td > p{
+				width: 350px;
+			}
+			ul {
+				list-style: none;
+			}
+			input[name = "status"] {
+				display: none;
+			}
+			div#test {
+				position: relative;
+				left: -200px;
+			}
+			table.sort tbody tr{
+				height: 50px;
+			} 
+			table.sort th{
+				border:1px solid blue;
+				padding:0.3em 1em;
+			}
+      		table.sort td{
+       		 border:1px solid blue;
+       		 padding:0.3em 1em;
+    		}
+			table.sort thead th{
+				cursor:pointer;
+				cursor:hand;
+				font-weight:bold;
+				text-align:center;
+				vertical-align:middle;
+			}
+			table.sort thead th.curcol{
+				background-color:#999999;
+				color:#FFFFFF;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="test">
+			<form action="" id="add" method="post" onsubmit="addRow();return false;">
+				<ul>
+					<li>
+						<label for="title">Title__</label>
+						<input type="text" name="title" id="title" value="ForExampleTitle" size="20"/>
+					</li>
+					<li>
+						<label for="author">Author</label>
+						<input type="text" name="author" id="author" value="ForExampleAuthor" size="20"/>
+					</li>
+					<li>
+						<label for="status"></label>
+						<input type="checkbox" class="status" id="status" name="status" value=""/>
+					</li>
+					<li>
+						<label for="subm"></label>
+						<input type="submit" name="subm" class="submit" value="Add"/>
+					</li>
+				</ul>
+			</form>
+
+			<label for="button"></label>
+			<input type="button" name="butt" id="button" class="button" value="Clear checked" onclick="deleteElements()"/>
+
+			<label for="deleteAll"></label>
+			<input type="button" name="deleteAll" id="deleteAll" class="deleteAll" value="Clear All" onclick="clearAll()"/>
+
+			<table id="tab1" class="sort" align="center">
+				<thead>
+					<tr><th onclick="mySorting0()">field name</th><th onclick="mySorting1()" id="done">status</th><th onclick="mySorting2()" id="title">title</th><th onclick="mySorting3()" id="author"><p>author</p></th><th onclick="mySorting0()" id="updated">last updated</th></tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table> <br>
+
+			<script type="text/javascript">
+				var d = document,
+					title, title_,
+					author, author_,
+					status, status_,
+					id, el, flag, count = 0,
+					done, elems = [],
+					elems2 = [], x,
+					update, elements = {},
+					sElements, retElements;
+
+				var tbody,checkbox,redactionTitle,redactionAuthor,
+				    redactionTitleUndated,row, td1, td2, td3, td4, td5;
+    
+    function addNewRow(){
+    	tbody = d.getElementById('tab1').getElementsByTagName('tbody')[0];
+    	
+    	checkbox = d.createElement("input");
+    	checkbox.type = "checkbox";
+    	checkbox.onchange = changeAnything; 
+
+    	redactionTitle = d.createElement("input");
+    	redactionTitle.type = "text";
+    	redactionTitle.onchange = changeAnything; 
+
+    	redactionAuthor = d.createElement("input");
+    	redactionAuthor.type = "text";
+    	redactionAuthor.onchange = changeAnything;
+
+    	redactionTitleUndated = d.createElement("p");
+    	row = d.createElement("TR");
+    	tbody.appendChild(row);
+        
+    	td1 = d.createElement("TD");
+    	td2 = d.createElement("TD");
+    	td3 = d.createElement("TD");
+    	td4 = d.createElement("TD");
+    	td5 = d.createElement("TD");
+
+    	row.appendChild(td1);
+    	row.appendChild(td2);
+    	row.appendChild(td3);
+    	row.appendChild(td4);
+    	row.appendChild(td5);
+    }
+	function addRow(){
+
+    // Считываем значения с формы
+    title = d.getElementById('title').value;
+    author = d.getElementById('author').value;
+
+    title_ = d.getElementById('title');
+    author_ = d.getElementById('author');
+
+    var checkbox = d.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.onchange = changeAnything;
+
+    var redactionTitle = d.createElement("input");
+    redactionTitle.type = "text";
+    redactionTitle.value = title;
+    redactionTitle.onchange = changeAnything;
+
+    var redactionAuthor = d.createElement("input");
+    redactionAuthor.type = "text";
+    redactionAuthor.value = author;
+    redactionAuthor.onchange = changeAnything;
+    
+    var redactionTitleUndated = d.createElement("p");
+
+    //Проверка на пустое поле
+    var el = 0;
+
+    if (!title.replace(/^\s+|\s+$/g, '')) { 
+       //вырезаем все символы перевода строк
+       el = 1;
+       title_.style.border = "2px solid red";
+     } else if (!author.replace(/^\s+|\s+$/g, '')) {
+     	el = 1;
+     	author_.style.border = "2px solid red";
+     }
+
+     if (el) {
+     	alert ('Поля не должны быть пустыми');
+     	return false;
+     }
+
+     if (!el) {
+     	title_.style.border = "";
+     	author_.style.border = "";
+     	title_.style.backgroundColor = 'lightgreen';
+     	author_.style.backgroundColor = 'lightgreen';
+     }
+
+    // Находим нужную таблицу
+    var tbody = d.getElementById('tab1').getElementsByTagName('tbody')[0];
+
+    // Создаем строку таблицы и добавляем ее
+    var row = d.createElement("TR");
+        tbody.appendChild(row);
+
+    // Создаем ячейки в вышесозданной строке и добавляем текст
+    var td1 = d.createElement("TD");
+    var td2 = d.createElement("TD");
+    var td3 = d.createElement("TD");
+    var td4 = d.createElement("TD");
+    var td5 = d.createElement("TD");
+
+    row.appendChild(td1);
+    row.appendChild(td2);
+    row.appendChild(td3);
+    row.appendChild(td4);
+    row.appendChild(td5);
+
+    id = +new Date();
+    updated = new Date();
+
+    // Наполняем ячейки
+    td1.innerHTML = id;
+    td2.appendChild(checkbox);
+    td3.appendChild(redactionTitle);
+    td4.appendChild(redactionAuthor);
+    redactionTitleUndated.innerHTML = updated.toISOString();
+    td5.appendChild(redactionTitleUndated);
+
+    elements = {
+    	"id": id,
+    	"title": title,
+    	"author": author,
+    	"done": checkbox.checked,
+    	"updated": updated
+    }
+
+    sElements = JSON.stringify(elements);
+    localStorage.setItem(id, sElements);
+    retElements = JSON.parse(localStorage.getItem(id));
+    elems2.push(retElements);
+ }
+ function clearAll(){
+ 	var x = d.querySelectorAll("tbody tr");
+ 	for (var i = 0; i < x.length; i++) {
+ 		x[i].parentNode.removeChild(x[i]);
+ 	}
+ 	localStorage.clear();
+ }
+ function sortFunctionTitle(a, b){
+ 	if (flag) {
+ 	if (a.title < b.title) return 1;
+ 	if(a.title > b.title) return -1;
+    } else {
+ 	if (a.title < b.title) return -1;
+ 	if(a.title > b.title) return 1;
+    }
+ }
+ function sortFunctionAuthor(a, b){
+ if (flag) {
+  if (a.author < b.author) return 1;
+  if(a.author > b.author) return -1;
+   } else {
+   	if (a.author < b.author) return -1;
+ 	if(a.author > b.author) return 1;
+    }	
+ }
+ function sortFunctionFieldName(a, b){
+ 	if (flag) {return a.id - b.id;}
+ 	else {return b.id - a.id;}
+ }
+function sortFunctionStatus(a, b){
+if (flag) {
+  if (a.done < b.done) return 1;
+  if(a.done > b.done) return -1;
+   } else {
+  if (a.done < b.done) return -1;
+  if(a.done > b.done) return 1;
+    }
+ }
+function mySorting0(){
+	count ++, flag = count%2;
+	var numberId1, numberId2 = [];
+	for (var i = 0; i < localStorage.length; i++) {
+	var key1 = localStorage.key(i);
+    var val1 = localStorage[key1];
+    numberId1 = JSON.parse(val1);
+    numberId2.push(numberId1);
+    }
+ 	numberId2.sort(sortFunctionFieldName);
+	for (var j = 0; j < localStorage.length; j++) {
+	var key2 = localStorage.key(j);
+    var val2 = localStorage[key2];
+    numberId1 = JSON.parse(val2);
+    numberId1 = numberId2[j];
+
+        addNewRow();
+
+    	redactionTitle.value = numberId1.title;
+    	redactionAuthor.value = numberId1.author;
+
+    	td1.innerHTML = numberId2[j].id;
+    	if (numberId1.done == true) checkbox.checked = "checked";
+    	td2.appendChild(checkbox);
+    	td3.appendChild(redactionTitle);
+    	td4.appendChild(redactionAuthor);
+    	redactionTitleUndated.innerHTML = numberId1.updated;
+    	td5.appendChild(redactionTitleUndated);  
+
+		var serialQ = JSON.stringify(numberId1);
+        localStorage.setItem(JSON.parse(numberId2[j].id), serialQ);    
+    } 
+    var x = d.querySelectorAll("tbody tr");
+ 	for (var i = 0; i < x.length /2; i++) {
+ 		x[i].parentNode.removeChild(x[i]);
+ 	}
+  }
+function mySorting1(){
+	count ++, flag = count%2;
+	var status1, status2 = [];
+	for (var i = 0; i < localStorage.length; i++) {
+	var key1 = localStorage.key(i);
+    var val1 = localStorage[key1];
+    status1 = JSON.parse(val1);
+    status2.push(status1);
+    }
+ 	status2.sort(sortFunctionStatus);
+	for (var j = 0; j < localStorage.length; j++) {
+	var key2 = localStorage.key(j);
+    var val2 = localStorage[key2];
+    status1 = JSON.parse(val2);
+    status1 = status2[j];
+
+        addNewRow();
+
+    	redactionTitle.value = status1.title;
+    	redactionAuthor.value = status1.author;
+
+    	td1.innerHTML = status2[j].id;
+    	if (status1.done == true) checkbox.checked = "checked";
+    	td2.appendChild(checkbox);
+    	td3.appendChild(redactionTitle);
+    	td4.appendChild(redactionAuthor);
+    	redactionTitleUndated.innerHTML = status1.updated;
+    	td5.appendChild(redactionTitleUndated);  
+
+		var serialQ = JSON.stringify(status1);
+        localStorage.setItem(JSON.parse(status2[j].id), serialQ);    
+    } 
+    var x = d.querySelectorAll("tbody tr");
+ 	for (var i = 0; i < x.length /2; i++) {
+ 		x[i].parentNode.removeChild(x[i]);
+ 	}
+  }
+function mySorting2(){
+	count ++, flag = count%2;
+	var title1, title2 = [];
+	for (var i = 0; i < localStorage.length; i++) {
+	var key1 = localStorage.key(i);
+    var val1 = localStorage[key1];
+    title1 = JSON.parse(val1);
+    title2.push(title1);
+    }
+ 	title2.sort(sortFunctionTitle);
+	for (var j = 0; j < localStorage.length; j++) {
+	var key2 = localStorage.key(j);
+    var val2 = localStorage[key2];
+    title1 = JSON.parse(val2);
+    title1 = title2[j];
+
+        addNewRow();
+
+    	redactionTitle.value = title1.title;
+    	redactionAuthor.value = title1.author;
+
+    	td1.innerHTML = title2[j].id;
+    	if (title1.done == true) checkbox.checked = "checked";
+    	td2.appendChild(checkbox);
+    	td3.appendChild(redactionTitle);
+    	td4.appendChild(redactionAuthor);
+    	redactionTitleUndated.innerHTML = title1.updated;
+    	td5.appendChild(redactionTitleUndated);  
+
+		var serialQ = JSON.stringify(title1);
+        localStorage.setItem(JSON.parse(title2[j].id), serialQ);     
+    } 
+    var x = d.querySelectorAll("tbody tr");
+ 	for (var i = 0; i < x.length /2; i++) {
+ 		x[i].parentNode.removeChild(x[i]);
+ 	}
+  }
+function mySorting3(){
+	count ++, flag = count%2;
+	var author1, author2 = [];
+	for (var i = 0; i < localStorage.length; i++) {
+	var key1 = localStorage.key(i);
+    var val1 = localStorage[key1];
+    author1 = JSON.parse(val1);
+    author2.push(author1);
+    }
+ 	author2.sort(sortFunctionAuthor);
+	for (var j = 0; j < localStorage.length; j++) {
+		var key2 = localStorage.key(j);
+    	var val2 = localStorage[key2];
+    	author1 = JSON.parse(val2);
+   		author1 = author2[j];
+
+        addNewRow();
+
+    	redactionTitle.value = author1.title;
+    	redactionAuthor.value = author1.author;
+
+    	td1.innerHTML = author2[j].id;
+    	if (author1.done == true) checkbox.checked = "checked";
+    	td2.appendChild(checkbox);
+    	td3.appendChild(redactionTitle);
+    	td4.appendChild(redactionAuthor);
+    	redactionTitleUndated.innerHTML = author1.updated;
+    	td5.appendChild(redactionTitleUndated);  
+
+		var serialQ = JSON.stringify(author1);
+        localStorage.setItem(JSON.parse(author2[j].id), serialQ);    
+    } 
+    var x = d.querySelectorAll("tbody tr");
+ 	for (var i = 0; i < x.length /2; i++) {
+ 		x[i].parentNode.removeChild(x[i]);
+ 	}
+  }
+function deleteElements(){
+   x = d.querySelectorAll("tbody tr");
+   for (var i = 0; i < x.length; i++) {
+   	if (x[i].childNodes[1].firstChild.checked) {
+   		x[i].parentNode.removeChild(x[i]);
+   		for (var j = 0; j < x.length; j++) {
+   			if (+ x[i].childNodes[1].previousSibling.firstChild.data == elems2[j].id) {
+   				localStorage.removeItem(elems2[j].id);   
+   				elems2.splice(j, 1); 
+   				j = x.length; 
+   			}
+   		}
+   	}
+   }
+}
+function changeAnything() {  
+	el = 0;
+	if (!this.value.replace(/^\s+|\s+$/g, '')) {
+		el = 1;
+		this.value = "ForExample";
+	}
+	if (el) {
+		alert ('Поля не должны быть пустыми');
+		this.focus();
+	}
+	var j = 2;
+	var thead = d.getElementById('tab1').getElementsByTagName('thead')[0];
+
+	var k = -1, q, kk = -1;
+
+	for (var i = 0; i < this.parentNode.parentNode.childNodes.length; i++) {
+		if (this.parentNode == this.parentNode.parentNode.childNodes[i]) kk = i;
+	}
+
+	if (kk == 1) {k = "done";}
+	else if (kk == 2) {k = "title";}
+	else if (kk == 3) {k = "author";}
+
+	for (var i = 0; i < localStorage.length; i++) {
+		var key = localStorage.key(i);
+		var val = localStorage[key];
+
+		if (this.parentNode.parentNode.firstChild.firstChild.data == JSON.parse(key)) {
+
+			q = JSON.parse(localStorage.getItem(JSON.parse(key)));
+
+			if ((kk == 2)||(kk == 3)) q[k] = this.value;
+
+			if (kk == 1) q[k] = this.checked;
+
+			var updated = new Date();
+			q.updated = updated.toISOString();
+
+			var serialQ = JSON.stringify(q);
+			localStorage.setItem(JSON.parse(key), serialQ);
+		} 
+	}
+	var updated1 = new Date();
+	this.parentNode.parentNode.lastChild.lastChild.innerHTML = updated1.toISOString();
+} 
+window.onload = function init(){
+    for (var i = 0; i < localStorage.length; i++) {
+    	var key = localStorage.key(i);
+    	var val = localStorage[key];
+
+    	addNewRow();
+
+    	redactionTitle.value = JSON.parse(val).title;
+    	redactionAuthor.value = JSON.parse(val).author;
+
+    	td1.innerHTML = key;
+    	if (JSON.parse(val).done == true) checkbox.checked = "checked";
+    	td2.appendChild(checkbox);
+    	td3.appendChild(redactionTitle);
+    	td4.appendChild(redactionAuthor);
+    	redactionTitleUndated.innerHTML = JSON.parse(val).updated;
+    	td5.appendChild(redactionTitleUndated);  
+
+    	retElements = JSON.parse(localStorage.getItem(JSON.parse(val).id));
+    	elems2.push(retElements);     
+    }    
+  }
+</script>
+</div>
+</body>
+</html>
